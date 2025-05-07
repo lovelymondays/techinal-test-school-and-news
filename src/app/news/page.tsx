@@ -98,10 +98,10 @@ export default function NewsPage() {
                   className="p-6 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 >
                   <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                  <p className="text-sm text-gray-500 mb-4">
+                  <p className="text-sm text-blue-500 mb-4">
                     {item.formattedDate}
                   </p>
-                  <p className="text-gray-600 mb-4">{item.description}</p>
+                  <p className="text-blue-600 mb-4">{item.description}</p>
                   <a
                     href={item.link}
                     target="_blank"

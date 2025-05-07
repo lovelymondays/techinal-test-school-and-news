@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect } from "react";
 import { useSchoolStore } from "@/store/schoolStore";
 import { SearchInput } from "@/components/atoms/SearchInput";
 
@@ -53,28 +53,28 @@ export default function SchoolPage() {
                           <h3 className="text-xl font-bold text-blue-600 mb-2">
                             {school.sekolah}
                           </h3>
-                          <p className="text-gray-600">
+                          <p className="text-gray-900">
                             <span className="font-medium">NPSN:</span>{" "}
                             {school.npsn}
                           </p>
                         </div>
 
                         <div className="space-y-2">
-                          <p className="text-gray-600">
+                          <p className="text-gray-900">
                             <span className="font-medium">Type:</span>{" "}
                             {school.bentuk}
                           </p>
-                          <p className="text-gray-600">
+                          <p className="text-gray-900">
                             <span className="font-medium">Status:</span>{" "}
                             {school.status}
                           </p>
                         </div>
 
                         <div className="space-y-2">
-                          <p className="text-gray-600">
+                          <p className="text-gray-900">
                             <span className="font-medium">Address:</span>
                           </p>
-                          <p className="text-gray-600 pl-4">
+                          <p className="text-gray-900 pl-4">
                             {school.alamat_jalan}
                           </p>
                         </div>
@@ -83,35 +83,35 @@ export default function SchoolPage() {
                       {/* Location Information */}
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <p className="text-gray-600">
+                          <p className="text-gray-900">
                             <span className="font-medium">Province Code:</span>{" "}
                             {school.kode_prop}
                           </p>
-                          <p className="text-gray-600">
+                          <p className="text-gray-900">
                             <span className="font-medium">Province:</span>{" "}
                             {school.propinsi}
                           </p>
                         </div>
 
                         <div className="space-y-2">
-                          <p className="text-gray-600">
+                          <p className="text-gray-900">
                             <span className="font-medium">
                               City/Regency Code:
                             </span>{" "}
                             {school.kode_kab_kota}
                           </p>
-                          <p className="text-gray-600">
+                          <p className="text-gray-900">
                             <span className="font-medium">City/Regency:</span>{" "}
                             {school.kabupaten_kota}
                           </p>
                         </div>
 
                         <div className="space-y-2">
-                          <p className="text-gray-600">
+                          <p className="text-gray-900">
                             <span className="font-medium">District Code:</span>{" "}
                             {school.kode_kec}
                           </p>
-                          <p className="text-gray-600">
+                          <p className="text-gray-900">
                             <span className="font-medium">District:</span>{" "}
                             {school.kecamatan}
                           </p>
@@ -119,10 +119,10 @@ export default function SchoolPage() {
 
                         {/* Coordinates */}
                         <div className="space-y-2">
-                          <p className="text-gray-600">
+                          <p className="text-gray-900">
                             <span className="font-medium">Coordinates:</span>
                           </p>
-                          <p className="text-gray-600 pl-4">
+                          <p className="text-gray-900 pl-4">
                             Latitude: {school.lintang}
                             <br />
                             Longitude: {school.bujur}

@@ -59,7 +59,9 @@ export default function Home() {
           </div>
 
           <div className="p-4 bg-blue-50 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4">School Statistics</h3>
+            <h3 className="text-lg text-black font-semibold mb-4">
+              School Statistics
+            </h3>
             <p className="text-blue-600">
               Total Schools Available: {totalData.toLocaleString()}
             </p>
@@ -111,8 +113,8 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4">
+          <div className="p-4 bg-gray-100 rounded-lg">
+            <h3 className="text-lg font-semibold mb-4 text-black">
               Available News Sources
             </h3>
             <div className="grid grid-cols-2 gap-4">
@@ -121,7 +123,7 @@ export default function Home() {
                   key={source.name}
                   className="p-4 bg-white rounded-lg shadow-sm"
                 >
-                  <h4 className="font-semibold mb-2">
+                  <h4 className="font-semibold mb-2 text-black">
                     {source.name.toUpperCase()}
                   </h4>
                   <p className="text-sm text-blue-600">
@@ -143,7 +145,7 @@ export default function Home() {
                   key={index}
                   className="p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <h3 className="font-semibold">{item.title}</h3>
+                  <h3 className="font-semibold text-black">{item.title}</h3>
                   <p className="text-sm text-blue-500">{item.formattedDate}</p>
                   <p className="mt-2 text-blue-600">{item.description}</p>
                   <a
