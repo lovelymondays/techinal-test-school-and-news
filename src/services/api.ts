@@ -8,7 +8,13 @@ export interface NewsEndpoint {
 
 export interface NewsSource {
   name: string;
-  paths: NewsEndpoint[];
+  paths: NewsSource[];
+  link: string;
+  title: string;
+  pubDate: string;
+  description: string;
+  thumbnail: string;
+  image: string;
 }
 
 export interface NewsAPIResponse {
@@ -73,7 +79,7 @@ export async function fetchNews(
     if (!response.ok) {
       throw new Error("Failed to fetch news");
     }
-    return await response.json();
+    return response.json();
   } catch (error) {
     console.error("Error fetching news:", error);
     throw error;
@@ -85,10 +91,12 @@ export async function fetchNewsSourcesAndCategories(): Promise<NewsAPIResponse> 
     const response = await fetch(NEWS_API);
     if (!response.ok) {
       throw new Error("Failed to fetch news sources");
+      console.log("Fetched news data:", response);
     }
     return await response.json();
   } catch (error) {
     console.error("Error fetching news sources:", error);
+    console.log("Fetch failed:", error);
     throw error;
   }
 }

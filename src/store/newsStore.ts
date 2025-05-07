@@ -1,63 +1,79 @@
 import { create } from "zustand";
-import {
-  fetchNews,
-  fetchNewsSourcesAndCategories,
-  NewsSource,
-} from "@/services/api";
+import { fetchNews, fetchNewsSourcesAndCategories } from "@/services/api";
 
-interface News {
-  title: string;
+interface NewsItem {
   link: string;
+  title: string;
   pubDate: string;
   description: string;
-  // Add more fields as per API response
+  thumbnail: string;
+}
+
+interface NewsData {
+  link: string;
+  image: string;
+  description: string;
+  title: string;
+  posts: NewsItem[];
+}
+
+interface FormattedNewsItem extends NewsItem {
+  formattedDate: string;
+  category: string;
 }
 
 interface NewsStore {
-  news: News[];
-  sources: NewsSource[];
+  sources: Array<{
+    name: string;
+    paths: Array<{ name: string; link: string }>;
+  }>;
+  currentSource: string;
+  currentCategory: string;
+  newsData: NewsData | null;
+  allPosts: { [category: string]: FormattedNewsItem[] };
   searchQuery: string;
   loading: boolean;
   error: string | null;
-  currentSource: string;
-  currentCategory: string;
-  setNews: (news: News[]) => void;
-  setSources: (sources: NewsSource[]) => void;
   setSearchQuery: (query: string) => void;
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
   setCurrentSource: (source: string) => void;
   setCurrentCategory: (category: string) => void;
-  fetchNewsData: () => Promise<void>;
   fetchNewsSources: () => Promise<void>;
-
-  // Computed properties
-  filteredNews: News[];
-  formattedNews: (News & { formattedDate: string })[];
-  availableCategories: string[];
+  fetchNewsData: () => Promise<void>;
+  fetchAllCategoryPosts: () => Promise<void>;
+  formattedNews: FormattedNewsItem[];
 }
 
 export const useNewsStore = create<NewsStore>((set, get) => ({
-  news: [],
   sources: [],
+  currentSource: "antara",
+  currentCategory: "terbaru",
+  newsData: null,
+  allPosts: {},
   searchQuery: "",
   loading: false,
   error: null,
-  currentSource: "antara",
-  currentCategory: "terbaru",
 
-  setNews: (news) => set({ news }),
-  setSources: (sources) => set({ sources }),
   setSearchQuery: (query) => set({ searchQuery: query }),
-  setLoading: (loading) => set({ loading }),
-  setError: (error) => set({ error }),
   setCurrentSource: (source) => {
-    set({ currentSource: source, currentCategory: "terbaru" });
-    get().fetchNewsData();
+    set({ currentSource: source, currentCategory: "terbaru", allPosts: {} });
+    get().fetchAllCategoryPosts();
   },
   setCurrentCategory: (category) => {
     set({ currentCategory: category });
     get().fetchNewsData();
+  },
+
+  fetchNewsSources: async () => {
+    set({ loading: true, error: null });
+    try {
+      const data = await fetchNewsSourcesAndCategories();
+      set({ sources: data.endpoints });
+      get().fetchAllCategoryPosts();
+    } catch (error) {
+      set({ error: "Failed to fetch news sources" });
+    } finally {
+      set({ loading: false });
+    }
   },
 
   fetchNewsData: async () => {
@@ -65,7 +81,7 @@ export const useNewsStore = create<NewsStore>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const data = await fetchNews(currentSource, currentCategory);
-      set({ news: data.data || [] });
+      set({ newsData: data.data });
     } catch (error) {
       set({ error: "Failed to fetch news" });
     } finally {
@@ -73,45 +89,67 @@ export const useNewsStore = create<NewsStore>((set, get) => ({
     }
   },
 
-  fetchNewsSources: async () => {
+  fetchAllCategoryPosts: async () => {
+    const { currentSource, sources } = get();
+    const currentSourceData = sources.find(
+      (source) => source.name === currentSource
+    );
+    if (!currentSourceData) return;
+
+    set({ loading: true, error: null, allPosts: {} });
+
     try {
-      const data = await fetchNewsSourcesAndCategories();
-      set({ sources: data.endpoints });
+      const allPosts: { [category: string]: FormattedNewsItem[] } = {};
+
+      // Fetch posts for each category
+      for (const path of currentSourceData.paths) {
+        const data = await fetchNews(currentSource, path.name);
+        if (data.data && data.data.posts) {
+          allPosts[path.name] = data.data.posts.map((post:any) => ({
+            ...post,
+            category: path.name,
+            formattedDate: formatDate(post.pubDate),
+          }));
+        }
+      }
+
+      set({ allPosts });
     } catch (error) {
-      set({ error: "Failed to fetch news sources" });
+      set({ error: "Failed to fetch category posts" });
+    } finally {
+      set({ loading: false });
     }
   },
 
-  // Computed property for filtered news
-  get filteredNews() {
-    const { news, searchQuery } = get();
-    if (!searchQuery.trim()) return news;
+  get formattedNews() {
+    const { newsData, searchQuery } = get();
+    if (!newsData) return [];
 
-    return news.filter(
-      (item) =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase())
+    const formattedPosts = newsData.posts.map((post) => ({
+      ...post,
+      category: get().currentCategory,
+      formattedDate: formatDate(post.pubDate),
+    }));
+
+    if (!searchQuery.trim()) return formattedPosts;
+
+    const query = searchQuery.toLowerCase();
+    return formattedPosts.filter(
+      (post) =>
+        post.title.toLowerCase().includes(query) ||
+        post.description.toLowerCase().includes(query)
     );
   },
-
-  // Computed property for formatted dates
-  get formattedNews() {
-    const { filteredNews } = get();
-    return filteredNews.map((news) => ({
-      ...news,
-      formattedDate: new Date(news.pubDate).toLocaleDateString("id-ID", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }),
-    }));
-  },
-
-  // Computed property for available categories
-  get availableCategories() {
-    const { sources, currentSource } = get();
-    const source = sources.find((s) => s.name === currentSource);
-    return source ? source.paths.map((p) => p.name) : [];
-  },
 }));
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("id-ID", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
