@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import type React from "react";
 
 interface PerPageSelectorProps {
   perPage: number;
@@ -10,7 +12,7 @@ interface PerPageSelectorProps {
 export const PerPageSelector: React.FC<PerPageSelectorProps> = ({
   perPage,
   onPerPageChange,
-  options = [10, 20, 50],
+  options = [10, 20, 100],
   className = "",
 }) => {
   return (
@@ -22,7 +24,7 @@ export const PerPageSelector: React.FC<PerPageSelectorProps> = ({
         id="perPageSelect"
         value={perPage}
         onChange={(e) => onPerPageChange(Number(e.target.value))}
-        className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="px-2 py-1 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-lavender-400 shadow-sm"
       >
         {options.map((option) => (
           <option key={option} value={option}>

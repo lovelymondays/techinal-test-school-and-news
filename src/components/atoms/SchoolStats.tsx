@@ -1,5 +1,5 @@
-import React from "react";
-import { School } from "@/store/schoolStore";
+import type React from "react";
+import type { School } from "@/store/schoolStore";
 
 interface SchoolStatsProps {
   schools: School[];
@@ -40,21 +40,25 @@ export const SchoolStats: React.FC<SchoolStatsProps> = ({
   });
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-      <h2 className="text-lg font-semibold mb-4">School Statistics</h2>
+    <div className="p-5 mb-6 text-black bg-white border rounded-lg shadow-sm sm:p-6 border-lavender-100">
+      <h2 className="mb-4 text-lg font-semibold text-black">
+        School Statistics
+      </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {/* Total Schools */}
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <h3 className="text-sm font-medium text-blue-700">Total Schools</h3>
+        <div className="p-4 bg-blue-100 rounded-lg">
+          <h3 className="text-sm font-medium text-lavender-700">
+            Total Schools
+          </h3>
           <p className="text-2xl font-bold">{totalData.toLocaleString()}</p>
         </div>
 
         {/* School Types */}
-        <div className="bg-green-50 p-4 rounded-lg">
-          <h3 className="text-sm font-medium text-green-700">School Types</h3>
+        <div className="p-4 rounded-lg bg-purple-50">
+          <h3 className="text-sm font-medium text-mint-700">School Types</h3>
           <p className="text-2xl font-bold">{Object.keys(typeCount).length}</p>
-          <div className="mt-2 text-xs text-green-800">
+          <div className="mt-2 text-xs text-mint-800">
             {Object.entries(typeCount)
               .slice(0, 3)
               .map(([type, count]) => (
@@ -72,8 +76,8 @@ export const SchoolStats: React.FC<SchoolStatsProps> = ({
         </div>
 
         {/* School Status */}
-        <div className="bg-purple-50 p-4 rounded-lg">
-          <h3 className="text-sm font-medium text-purple-700">School Status</h3>
+        <div className="p-4 rounded-lg bg-rose-50">
+          <h3 className="text-sm font-medium text-rose-700">School Status</h3>
           <div className="mt-2">
             {Object.entries(statusCount).map(([status, count]) => (
               <div key={status} className="flex justify-between">

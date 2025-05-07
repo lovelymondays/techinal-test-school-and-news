@@ -44,22 +44,22 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <main className="container px-4 py-8 mx-auto max-w-7xl">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         {/* Schools Section */}
         <section className="space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">Schools</h2>
             <Link
               href="/school"
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              className="px-4 py-2 text-white transition-colors rounded-lg shadow-sm bg-lavender-400 hover:bg-blue-600"
             >
               View All Schools
             </Link>
           </div>
 
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h3 className="text-lg text-black font-semibold mb-4">
+          <div className="p-4 rounded-lg bg-gray-50">
+            <h3 className="mb-4 text-lg font-semibold text-black">
               School Statistics
             </h3>
             <p className="text-blue-600">
@@ -82,18 +82,18 @@ export default function Home() {
 
         {/* News Section */}
         <section className="space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">News</h2>
             <Link
               href="/news"
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              className="px-4 py-2 text-white transition-colors rounded-lg shadow-sm bg-lavender-400 hover:bg-blue-600"
             >
               View All News
             </Link>
           </div>
 
           <div className="p-4 bg-gray-100 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4 text-black">
+            <h3 className="mb-4 text-lg font-semibold text-black">
               Available News Sources
             </h3>
             <div className="grid grid-cols-2 gap-4">
@@ -102,7 +102,7 @@ export default function Home() {
                   key={source.name}
                   className="p-4 bg-white rounded-lg shadow-sm"
                 >
-                  <h4 className="font-semibold mb-2 text-black">
+                  <h4 className="mb-2 font-semibold text-black">
                     {source.name.toUpperCase()}
                   </h4>
                   <p className="text-sm text-blue-600">
@@ -122,7 +122,7 @@ export default function Home() {
               {formattedNews.slice(0, 3).map((item, index) => (
                 <div
                   key={index}
-                  className="p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                  className="p-4 transition-shadow border rounded-lg shadow-sm hover:shadow-md"
                 >
                   <h3 className="font-semibold text-black">{item.title}</h3>
                   <p className="text-sm text-blue-500">{item.formattedDate}</p>
@@ -131,7 +131,7 @@ export default function Home() {
                     href={item.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline mt-2 inline-block"
+                    className="inline-block mt-2 text-blue-500 hover:underline"
                   >
                     Read more
                   </a>

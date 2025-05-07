@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import type React from "react";
 
 interface SearchInputProps {
   value: string;
@@ -20,10 +22,10 @@ export const SearchInput: React.FC<SearchInputProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        className={`w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-lavender-400 shadow-sm ${className}`}
       />
       <svg
-        className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+        className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 right-3 top-1/2"
         fill="none"
         strokeLinecap="round"
         strokeLinejoin="round"

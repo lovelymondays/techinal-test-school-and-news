@@ -1,5 +1,5 @@
-import React from "react";
-import { School } from "@/store/schoolStore";
+import type React from "react";
+import type { School } from "@/store/schoolStore";
 
 interface SchoolCardProps {
   school: School;
@@ -7,12 +7,12 @@ interface SchoolCardProps {
 
 export const SchoolCard: React.FC<SchoolCardProps> = ({ school }) => {
   return (
-    <div className="p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="p-5 text-black transition-all bg-white border rounded-lg shadow-sm sm:p-6 hover:shadow-md border-purple-50 hover:border-lavender-200">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 sm:gap-6">
         {/* Basic Information */}
         <div className="space-y-4">
           <div>
-            <h3 className="text-xl font-bold text-blue-600 mb-2">
+            <h3 className="mb-2 text-xl font-bold text-lavender-600">
               {school.sekolah}
             </h3>
             <p className="text-gray-900">
@@ -33,7 +33,7 @@ export const SchoolCard: React.FC<SchoolCardProps> = ({ school }) => {
             <p className="text-gray-900">
               <span className="font-medium">Address:</span>
             </p>
-            <p className="text-gray-900 pl-4">{school.alamat_jalan}</p>
+            <p className="pl-4 text-gray-900">{school.alamat_jalan}</p>
           </div>
         </div>
 
@@ -57,7 +57,7 @@ export const SchoolCard: React.FC<SchoolCardProps> = ({ school }) => {
             <p className="text-gray-900">
               <span className="font-medium">Coordinates:</span>
             </p>
-            <p className="text-gray-900 pl-4">
+            <p className="pl-4 text-gray-900">
               Latitude: {school.lintang}
               <br />
               Longitude: {school.bujur}
@@ -67,7 +67,7 @@ export const SchoolCard: React.FC<SchoolCardProps> = ({ school }) => {
                 href={`https://www.google.com/maps?q=${school.lintang},${school.bujur}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                className="inline-block px-4 py-2 mt-2 text-white transition-colors bg-blue-400 rounded-lg shadow-sm hover:bg-lavender-500"
               >
                 View on Map
               </a>
