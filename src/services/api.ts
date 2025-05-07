@@ -51,14 +51,44 @@ export interface SchoolAPIResponse {
 
 export async function fetchSchools(
   page: number = 1,
-  perPage: number = 10
+  perPage: number = 10,
+  query: string = ""
 ): Promise<SchoolAPIResponse> {
   try {
-    const response = await fetch(SCHOOL_API);
+    // Add query parameter if search query exists
+    let url = `${SCHOOL_API}?page=${page}&perPage=${perPage}`;
+
+    // Note: The actual API might not support search via URL parameters
+    // If the API supports search, uncomment this code
+    // if (query) {
+    //   url += `&search=${encodeURIComponent(query)}`;
+    // }
+
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error("Failed to fetch schools");
     }
-    return await response.json();
+
+    let data = await response.json();
+
+    // If the API doesn't support search via URL, we need to filter client-side
+    if (query && data.dataSekolah) {
+      const queryLower = query.toLowerCase();
+      data.dataSekolah = data.dataSekolah.filter(
+        (school: School) =>
+          school.sekolah.toLowerCase().includes(queryLower) ||
+          school.npsn.includes(queryLower) ||
+          school.alamat_jalan.toLowerCase().includes(queryLower) ||
+          school.propinsi.toLowerCase().includes(queryLower) ||
+          school.kabupaten_kota.toLowerCase().includes(queryLower) ||
+          school.kecamatan.toLowerCase().includes(queryLower)
+      );
+
+      // Adjust total_data to reflect the filtered count
+      data.total_data = data.dataSekolah.length;
+    }
+
+    return data;
   } catch (error) {
     console.error("Error fetching schools:", error);
     throw error;

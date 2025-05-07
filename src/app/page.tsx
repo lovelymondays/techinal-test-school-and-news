@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSchoolStore } from "@/store/schoolStore";
 import { useNewsStore } from "@/store/newsStore";
 import { fetchSchools } from "@/services/api";
-import { SearchInput } from "@/components/atoms/SearchInput";
+import { SchoolStats } from "@/components/atoms/SchoolStats";
 
 export default function Home() {
   const {
@@ -67,38 +67,17 @@ export default function Home() {
             </p>
           </div>
 
-          <SearchInput
-            value={schoolSearchQuery}
-            onChange={setSchoolSearchQuery}
-            placeholder="Search schools..."
+          <SchoolStats
+            schools={schools}
+            totalData={totalData}
+            loading={schoolsLoading} // ✅ fixed typo
           />
 
-          {schoolsLoading ? (
-            <p>Loading schools...</p>
-          ) : schoolsError ? (
-            <p className="text-red-500">{schoolsError}</p>
-          ) : (
-            <div className="space-y-4">
-              {filteredSchools.slice(0, 5).map((schools) => (
-                <div
-                  key={schools.id}
-                  className="p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <h3 className="font-semibold">{schools.sekolah}</h3>
-                  <p className="text-blue-600">NPSN: {schools.npsn}</p>
-                  <p className="text-blue-600">{schools.alamat_jalan}</p>
-                  <p className="text-sm text-blue-500 mt-2">
-                    {schools.kabupaten_kota}, {schools.propinsi}
-                  </p>
-                </div>
-              ))}
-              <div className="text-center">
-                <Link href="/school" className="text-blue-500 hover:underline">
-                  See more schools →
-                </Link>
-              </div>
-            </div>
-          )}
+          <div className="text-center">
+            <Link href="/school" className="text-blue-500 hover:underline">
+              See more schools →
+            </Link>
+          </div>
         </section>
 
         {/* News Section */}

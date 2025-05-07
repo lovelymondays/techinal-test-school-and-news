@@ -3,148 +3,165 @@
 import { useEffect } from "react";
 import { useSchoolStore } from "@/store/schoolStore";
 import { SearchInput } from "@/components/atoms/SearchInput";
+import { SchoolListView } from "@/components/atoms/SchoolListView";
+import { Pagination } from "@/components/atoms/Pagination";
+import { PerPageSelector } from "@/components/atoms/PerPageSelector";
+import { NavigationButtons } from "@/components/atoms/NavigationButtons";
+// import { SchoolStats } from "@/components/atoms/SchoolStats";
 
 export default function SchoolPage() {
   const {
-    groupedSchools,
+    schools,
     searchQuery,
     setSearchQuery,
     loading,
     error,
     fetchSchoolData,
+    currentPage,
+    totalPages,
+    setCurrentPage,
+    perPage,
+    setPerPage,
+    viewMode,
+    setViewMode,
+    totalData,
   } = useSchoolStore();
 
   useEffect(() => {
     fetchSchoolData();
   }, []);
 
+  const handleViewModeChange = (mode: "list" | "grid") => {
+    setViewMode(mode);
+  };
+
+  // Functions to handle pagination navigation
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return (
     <main className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Indonesian Schools Directory</h1>
 
       <div className="mb-8">
-        <SearchInput
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder="Search schools by name, NPSN, address, or location..."
-          className="max-w-2xl"
-        />
+        <div className="mb-4">
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search schools by name, NPSN, address, or location..."
+            className="max-w-2xl mb-2"
+          />
+          <p className="text-sm text-gray-500 mt-1">
+            Search is live - results update as you type
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-6">
+          {/* View mode toggle */}
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-600">View as:</span>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => handleViewModeChange("list")}
+                className={`px-3 py-1 rounded ${
+                  viewMode === "list"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                List
+              </button>
+              <button
+                onClick={() => handleViewModeChange("grid")}
+                className={`px-3 py-1 rounded ${
+                  viewMode === "grid"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                Grid
+              </button>
+            </div>
+          </div>
+
+          {/* Items per page selector */}
+          <PerPageSelector
+            perPage={perPage}
+            onPerPageChange={setPerPage}
+            options={[10, 20, 50]}
+          />
+        </div>
       </div>
 
       {loading ? (
-        <p>Loading schools...</p>
+        <div className="flex items-center justify-center p-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
       ) : error ? (
-        <p className="text-red-500">{error}</p>
+        <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600">{error}</p>
+          <button
+            onClick={() => fetchSchoolData(currentPage, perPage)}
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
       ) : (
         <div className="space-y-8">
-          {Object.entries(groupedSchools).map(([province, schools]) => (
-            <div key={province} className="border rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4">{province}</h2>
-              <div className="grid grid-cols-1 gap-4">
-                {schools.map((school) => (
-                  <div
-                    key={school.id}
-                    className="p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Basic Information */}
-                      <div className="space-y-4">
-                        <div>
-                          <h3 className="text-xl font-bold text-blue-600 mb-2">
-                            {school.sekolah}
-                          </h3>
-                          <p className="text-gray-900">
-                            <span className="font-medium">NPSN:</span>{" "}
-                            {school.npsn}
-                          </p>
-                        </div>
+          {/* School statistics */}
+ 
 
-                        <div className="space-y-2">
-                          <p className="text-gray-900">
-                            <span className="font-medium">Type:</span>{" "}
-                            {school.bentuk}
-                          </p>
-                          <p className="text-gray-900">
-                            <span className="font-medium">Status:</span>{" "}
-                            {school.status}
-                          </p>
-                        </div>
-
-                        <div className="space-y-2">
-                          <p className="text-gray-900">
-                            <span className="font-medium">Address:</span>
-                          </p>
-                          <p className="text-gray-900 pl-4">
-                            {school.alamat_jalan}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Location Information */}
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <p className="text-gray-900">
-                            <span className="font-medium">Province Code:</span>{" "}
-                            {school.kode_prop}
-                          </p>
-                          <p className="text-gray-900">
-                            <span className="font-medium">Province:</span>{" "}
-                            {school.propinsi}
-                          </p>
-                        </div>
-
-                        <div className="space-y-2">
-                          <p className="text-gray-900">
-                            <span className="font-medium">
-                              City/Regency Code:
-                            </span>{" "}
-                            {school.kode_kab_kota}
-                          </p>
-                          <p className="text-gray-900">
-                            <span className="font-medium">City/Regency:</span>{" "}
-                            {school.kabupaten_kota}
-                          </p>
-                        </div>
-
-                        <div className="space-y-2">
-                          <p className="text-gray-900">
-                            <span className="font-medium">District Code:</span>{" "}
-                            {school.kode_kec}
-                          </p>
-                          <p className="text-gray-900">
-                            <span className="font-medium">District:</span>{" "}
-                            {school.kecamatan}
-                          </p>
-                        </div>
-
-                        {/* Coordinates */}
-                        <div className="space-y-2">
-                          <p className="text-gray-900">
-                            <span className="font-medium">Coordinates:</span>
-                          </p>
-                          <p className="text-gray-900 pl-4">
-                            Latitude: {school.lintang}
-                            <br />
-                            Longitude: {school.bujur}
-                          </p>
-                          {school.lintang && school.bujur && (
-                            <a
-                              href={`https://www.google.com/maps?q=${school.lintang},${school.bujur}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-block mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                            >
-                              View on Map
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {/* School count and pagination summary */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-gray-600 bg-gray-50 p-4 rounded-lg">
+            <div>
+              <p className="font-medium">
+                Showing schools {(currentPage - 1) * perPage + 1}-
+                {Math.min(currentPage * perPage, totalData)}
+                of {totalData} total results
+              </p>
+              {searchQuery && (
+                <p className="text-sm mt-1">
+                  Filtered by search: "{searchQuery}"
+                </p>
+              )}
             </div>
-          ))}
+          </div>
+
+          {/* School list */}
+          <SchoolListView schools={schools} viewMode={viewMode} />
+
+          {/* Previous/Next Navigation */}
+          <NavigationButtons
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPrevious={handlePreviousPage}
+            onNext={handleNextPage}
+            className="mt-8"
+          />
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            className="mt-4"
+          />
         </div>
       )}
     </main>

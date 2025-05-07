@@ -26,17 +26,22 @@ interface SchoolStore {
   currentPage: number;
   totalData: number;
   perPage: number;
+  viewMode: "list" | "grid";
+
   setSchools: (schools: School[]) => void;
   setSearchQuery: (query: string) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setCurrentPage: (page: number) => void;
+  setPerPage: (perPage: number) => void;
   setTotalData: (total: number) => void;
-  fetchSchoolData: (page?: number) => Promise<void>;
+  setViewMode: (mode: "list" | "grid") => void;
+  fetchSchoolData: (page?: number, itemsPerPage?: number) => Promise<void>;
 
   // Computed properties
   filteredSchools: School[];
   groupedSchools: { [key: string]: School[] };
+  totalPages: number;
 }
 
 export const useSchoolStore = create<SchoolStore>((set, get) => ({
@@ -47,25 +52,42 @@ export const useSchoolStore = create<SchoolStore>((set, get) => ({
   currentPage: 1,
   totalData: 0,
   perPage: 10,
+  viewMode: "list",
 
   setSchools: (schools) => set({ schools }),
-  setSearchQuery: (query) => set({ searchQuery: query }),
+  setSearchQuery: (query) => {
+    set({ searchQuery: query });
+    // Reset to page 1 whenever search query changes
+    set({ currentPage: 1 });
+    // Fetch new data based on search query
+    setTimeout(() => get().fetchSchoolData(1, get().perPage), 0);
+  },
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
   setCurrentPage: (page) => {
     set({ currentPage: page });
-    get().fetchSchoolData(page);
+    get().fetchSchoolData(page, get().perPage);
+  },
+  setPerPage: (perPage) => {
+    set({ perPage });
+    get().fetchSchoolData(1, perPage); // Reset to page 1 when changing items per page
   },
   setTotalData: (total) => set({ totalData: total }),
+  setViewMode: (mode) => set({ viewMode: mode }),
 
-  fetchSchoolData: async (page = 1) => {
+  fetchSchoolData: async (page = 1, itemsPerPage = get().perPage) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetchSchools(page);
+      const response = await fetchSchools(
+        page,
+        itemsPerPage,
+        // get().searchQuery
+      );
       set({
         schools: response.dataSekolah,
         totalData: response.total_data,
         currentPage: page,
+        perPage: itemsPerPage,
       });
     } catch (error) {
       set({ error: "Failed to fetch schools" });
@@ -102,5 +124,11 @@ export const useSchoolStore = create<SchoolStore>((set, get) => ({
       acc[province].push(school);
       return acc;
     }, {} as { [key: string]: School[] });
+  },
+
+  // Computed property for total pages
+  get totalPages() {
+    const { totalData, perPage } = get();
+    return Math.ceil(totalData / perPage);
   },
 }));
